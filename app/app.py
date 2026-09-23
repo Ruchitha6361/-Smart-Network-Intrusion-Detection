@@ -9,7 +9,8 @@ load_dotenv()
 
 app = Flask(
     __name__,
-    template_folder=r"D:\Cybersecurity Projects\Smart-Network-Intrusion-Detection\templates"
+    template_folder=r"D:\Cybersecurity Projects\Smart-Network-Intrusion-Detection\templates",
+    static_folder=r"D:\Cybersecurity Projects\Smart-Network-Intrusion-Detection\static"
 )
 
 # Load trained ML model
