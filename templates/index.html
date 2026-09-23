@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Network Intrusion Detection</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 700px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1f3c88;
+        }
+
+        p {
+            text-align: center;
+            color: #555;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 12px;
+            background: #1f3c88;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #162d66;
+        }
+
+        #result {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Smart Network Intrusion Detection</h1>
+
+        <p>Enter network traffic details to detect suspicious activity</p>
+        <div style="display: flex; gap: 15px; margin-top: 25px; margin-bottom: 25px;">
+
+    <div style="flex: 1; background: #eef3ff; padding: 20px; text-align: center; border-radius: 10px;">
+        <h3>Total Predictions</h3>
+        <h2>{{ total }}</h2>
+    </div>
+
+    <div style="flex: 1; background: #ffecec; padding: 20px; text-align: center; border-radius: 10px;">
+        <h3>Attacks Detected</h3>
+        <h2>{{ attacks }}</h2>
+    </div>
+
+    <div style="flex: 1; background: #ecfff0; padding: 20px; text-align: center; border-radius: 10px;">
+        <h3>Normal Traffic</h3>
+        <h2>{{ normal }}</h2>
+    </div>
+
+</div>
+
+        <label>Duration</label>
+        <input type="number" id="dur" value="0.5">
+
+        <label>Source Packets</label>
+        <input type="number" id="spkts" value="10">
+
+        <label>Destination Packets</label>
+        <input type="number" id="dpkts" value="8">
+
+        <label>Source Bytes</label>
+        <input type="number" id="sbytes" value="1000">
+
+        <label>Destination Bytes</label>
+        <input type="number" id="dbytes" value="2000">
+
+        <label>Network Rate</label>
+        <input type="number" id="rate" value="20">
+
+        <button onclick="predictTraffic()">Predict Traffic</button>
+        <br><br>
+
+<a href="/history">View Prediction History</a>
+
+        <div id="result"></div>
+        <h2 style="margin-top: 30px;">Prediction History</h2>
+
+<table border="1" width="100%" cellpadding="8">
+    <tr>
+        <th>ID</th>
+        <th>Prediction</th>
+        <th>Result</th>
+        <th>Time</th>
+    </tr>
+
+    {% for item in predictions %}
+    <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.prediction }}</td>
+        <td>{{ item.result }}</td>
+        <td>{{ item.created_at }}</td>
+    </tr>
+    {% endfor %}
+</table>
+    </div>
+
+    <script>
+        async function predictTraffic() {
+            const data = {
+                dur: parseFloat(document.getElementById("dur").value),
+                proto: "tcp",
+                service: "http",
+                state: "FIN",
+                spkts: parseInt(document.getElementById("spkts").value),
+                dpkts: parseInt(document.getElementById("dpkts").value),
+                sbytes: parseInt(document.getElementById("sbytes").value),
+                dbytes: parseInt(document.getElementById("dbytes").value),
+                rate: parseFloat(document.getElementById("rate").value),
+
+                sttl: 64,
+                dttl: 64,
+                sload: 100,
+                dload: 200,
+                sloss: 0,
+                dloss: 0,
+                sinpkt: 0.1,
+                dinpkt: 0.1,
+                sjit: 0,
+                djit: 0,
+                swin: 8192,
+                stcpb: 0,
+                dtcpb: 0,
+                dwin: 8192,
+                tcprtt: 0.1,
+                synack: 0.05,
+                ackdat: 0.05,
+                smean: 100,
+                dmean: 200,
+                trans_depth: 0,
+                response_body_len: 0,
+                ct_srv_src: 1,
+                ct_state_ttl: 1,
+                ct_dst_ltm: 1,
+                ct_src_dport_ltm: 1,
+                ct_dst_sport_ltm: 1,
+                ct_dst_src_ltm: 1,
+                is_ftp_login: 0,
+                ct_ftp_cmd: 0,
+                ct_flw_http_mthd: 0,
+                ct_src_ltm: 1,
+                ct_srv_dst: 1,
+                is_sm_ips_ports: 0
+            };
+
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            document.getElementById("result").innerText =
+                result.result || result.error;
+        }
+    </script>
+
+</body>
+</html>
