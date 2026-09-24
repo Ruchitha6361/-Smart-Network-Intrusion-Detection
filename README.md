@@ -51,3 +51,7 @@ python .\app\app.py
 Open in browser:
 
 http://127.0.0.1:5000
+
+## Dashboard Screenshot
+
+![Smart Network Intrusion Detection Dashboard](screenshots/dashboard.png)
